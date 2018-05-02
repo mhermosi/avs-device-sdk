@@ -192,7 +192,7 @@ then
     echo
 
     cd $SOURCE_PATH
-    git clone https://github.com/matrix-io/avs-device-sdk.git
+    git clone --branch yc/sensory-support https://github.com/matrix-io/avs-device-sdk.git
 
     #get sensory and build
     echo
