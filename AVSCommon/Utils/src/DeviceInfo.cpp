@@ -35,6 +35,8 @@ static const std::string TAG("DeviceInfo");
 const std::string CONFIG_KEY_DEVICE_INFO = "deviceInfo";
 /// Name of clientId value in DeviceInfo's @c ConfigurationNode.
 const std::string CONFIG_KEY_CLIENT_ID = "clientId";
+/// Name of clientSecret value in DeviceInfo's @c ConfigurationNode.
+const std::string CONFIG_KEY_CLIENT_SECRET = "clientSecret";
 /// Name of productId value in DeviceInfo's @c ConfigurationNode.
 const std::string CONFIG_KEY_PRODUCT_ID = "productId";
 /// Name of deviceSerialNumber value in DeviceInfo's @c ConfigurationNode.
@@ -43,6 +45,7 @@ const std::string CONFIG_KEY_DSN = "deviceSerialNumber";
 std::unique_ptr<DeviceInfo> DeviceInfo::create(
     const avsCommon::utils::configuration::ConfigurationNode& configurationRoot) {
     std::string clientId;
+    std::string clientSecret;
     std::string productId;
     std::string deviceSerialNumber;
     const std::string errorEvent = "createFailed";
@@ -62,6 +65,11 @@ std::unique_ptr<DeviceInfo> DeviceInfo::create(
         return nullptr;
     }
 
+    if (!deviceInfoConfiguration.getString(CONFIG_KEY_CLIENT_SECRET, &clientSecret)) {
+        ACSDK_ERROR(LX(errorEvent).d(errorReasonKey, "missingClientSecret").d(errorValueKey, CONFIG_KEY_CLIENT_SECRET));
+        return nullptr;
+    }
+
     if (!deviceInfoConfiguration.getString(CONFIG_KEY_PRODUCT_ID, &productId)) {
         ACSDK_ERROR(LX(errorEvent).d(errorReasonKey, "missingProductId").d(errorValueKey, CONFIG_KEY_PRODUCT_ID));
         return nullptr;
@@ -72,11 +80,12 @@ std::unique_ptr<DeviceInfo> DeviceInfo::create(
         return nullptr;
     }
 
-    return create(clientId, productId, deviceSerialNumber);
+    return create(clientId, clientSecret, productId, deviceSerialNumber);
 }
 
 std::unique_ptr<DeviceInfo> DeviceInfo::create(
     const std::string& clientId,
+    const std::string& clientSecret,
     const std::string& productId,
     const std::string& deviceSerialNumber) {
     const std::string errorEvent = "createFailed";
@@ -85,6 +94,11 @@ std::unique_ptr<DeviceInfo> DeviceInfo::create(
 
     if (clientId.empty()) {
         ACSDK_ERROR(LX(errorEvent).d(errorReasonKey, "missingClientId").d(errorValueKey, CONFIG_KEY_CLIENT_ID));
+        return nullptr;
+    }
+
+    if (clientSecret.empty()) {
+        ACSDK_ERROR(LX(errorEvent).d(errorReasonKey, "missingClientSecret").d(errorValueKey, CONFIG_KEY_CLIENT_SECRET));
         return nullptr;
     }
 
@@ -98,13 +112,17 @@ std::unique_ptr<DeviceInfo> DeviceInfo::create(
         return nullptr;
     }
 
-    std::unique_ptr<DeviceInfo> instance(new DeviceInfo(clientId, productId, deviceSerialNumber));
+    std::unique_ptr<DeviceInfo> instance(new DeviceInfo(clientId, clientSecret, productId, deviceSerialNumber));
 
     return instance;
 }
 
 std::string DeviceInfo::getClientId() const {
     return m_clientId;
+}
+
+std::string DeviceInfo::getClientSecret() const {
+   return m_clientSecret;
 }
 
 std::string DeviceInfo::getProductId() const {
@@ -117,6 +135,9 @@ std::string DeviceInfo::getDeviceSerialNumber() const {
 
 bool DeviceInfo::operator==(const DeviceInfo& rhs) {
     if (getClientId() != rhs.getClientId()) {
+        return false;
+    }
+    if (getClientSecret() != rhs.getClientSecret()) {
         return false;
     }
     if (getProductId() != rhs.getProductId()) {
@@ -135,9 +156,11 @@ bool DeviceInfo::operator!=(const DeviceInfo& rhs) {
 
 DeviceInfo::DeviceInfo(
     const std::string& clientId,
+    const std::string& clientSecret,
     const std::string& productId,
     const std::string& deviceSerialNumber) :
         m_clientId{clientId},
+        m_clientSecret{clientSecret},
         m_productId{productId},
         m_deviceSerialNumber{deviceSerialNumber} {
 }

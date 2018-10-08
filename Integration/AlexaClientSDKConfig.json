@@ -11,6 +11,8 @@
         "deviceSerialNumber":"${SDK_CONFIG_DEVICE_SERIAL_NUMBER}",
         // The Client ID of the Product from developer.amazon.com
         "clientId":"${SDK_CONFIG_CLIENT_ID}",
+        // The client Secret of the Product from developer.amazon.com
+        "clientSecret":"${SDK_CONFIG_CLIENT_SECRET}",
         // Product ID from developer.amazon.com
         "productId":"${SDK_CONFIG_PRODUCT_ID}"
     },

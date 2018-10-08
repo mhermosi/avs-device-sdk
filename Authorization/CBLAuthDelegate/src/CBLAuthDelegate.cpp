@@ -88,6 +88,9 @@ static const std::string POST_KEY_RESPONSE_TYPE = "response_type";
 /// client_id key in POST requests to @c LWA.
 static const std::string POST_KEY_CLIENT_ID = "client_id";
 
+static const std::string POST_KEY_CLIENT_SECRET = "client_secret";
+static const std::string POST_VALUE_CLIENT_SECRET = "6fc3ab7d137222a73d7950acf9b8959f28ecccd76cd512c79b93b869d5a33127";
+
 /// scope key in POST requests to @c LWA.
 static const std::string POST_KEY_SCOPE = "scope";
 
@@ -629,6 +632,7 @@ avsCommon::utils::libcurlUtils::HTTPResponse CBLAuthDelegate::requestRefresh() {
     const std::vector<std::pair<std::string, std::string>> postData = {
         {POST_KEY_GRANT_TYPE, POST_VALUE_REFRESH_TOKEN},
         {POST_KEY_REFRESH_TOKEN, m_refreshToken},
+        {POST_KEY_CLIENT_SECRET, POST_VALUE_CLIENT_SECRET},
         {POST_KEY_CLIENT_ID, m_configuration->getClientId()}};
     const std::vector<std::string> headerLines = {HEADER_LINE_URLENCODED};
 

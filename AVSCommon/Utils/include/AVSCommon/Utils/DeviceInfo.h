@@ -42,12 +42,14 @@ public:
      * Create a DeviceInfo.
      *
      * @param clientId Client Id.
+     * @param clientSecret Client Secret.
      * @param productId Product Id.
      * @param deviceSerialNumber DSN.
      * @return If successful, returns a new DeviceInfo, otherwise @c nullptr.
      */
     static std::unique_ptr<DeviceInfo> create(
         const std::string& clientId,
+        const std::string& clientSecret,
         const std::string& productId,
         const std::string& deviceSerialNumber);
 
@@ -57,6 +59,13 @@ public:
      * @return Client Id.
      */
     std::string getClientId() const;
+
+    /**
+     * Gets the client Secret.
+     *
+     * @return Client Secret.
+     */
+    std::string getClientSecret() const;
 
     /**
      * Gets the product Id.
@@ -93,13 +102,17 @@ private:
      * DeviceInfo constructor.
      *
      * @param clientId Client Id.
+     * @param clientSecret Client Secret.
      * @param productId Product Id.
      * @param deviceSerialNumber DSN.
      */
-    DeviceInfo(const std::string& clientId, const std::string& productId, const std::string& deviceSerialNumber);
+    DeviceInfo(const std::string& clientId, const std::string& clientSecret, const std::string& productId, const std::string& deviceSerialNumber);
 
     /// Client ID
     std::string m_clientId;
+
+    /// Client Secret
+    std::string m_clientSecret;
 
     /// Product ID
     std::string m_productId;

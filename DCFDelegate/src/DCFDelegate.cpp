@@ -107,6 +107,8 @@ static const std::string HEADER_KEY_VALUE_SEPARATOR = ":";
 static const std::string DB_KEY_ENDPOINT = "endpoint:";
 /// Client id key
 static const std::string DB_KEY_CLIENT_ID = "clientId:";
+/// Client Secret key
+static const std::string DB_KEY_CLIENT_SECRET = "clientSecret:";
 /// Product id key
 static const std::string DB_KEY_PRODUCT_ID = "productId:";
 /// Envelope version key
@@ -832,12 +834,14 @@ void DCFDelegate::getPreviouslySentDCFPublishData() {
     const std::string dbKeysPrefix = DB_KEY_ENDPOINT + m_dcfEndpoint + DB_KEY_SEPARATOR;
 
     std::string previousClientId;
+    std::string previousClientSecret;
     std::string previousProductId;
     std::string previousDeviceSerialNumber;
+    m_miscStorage->get(COMPONENT_NAME, DCF_PUBLISH_TABLE, dbKeysPrefix + DB_KEY_CLIENT_SECRET, &previousClientSecret);
     m_miscStorage->get(COMPONENT_NAME, DCF_PUBLISH_TABLE, dbKeysPrefix + DB_KEY_CLIENT_ID, &previousClientId);
     m_miscStorage->get(COMPONENT_NAME, DCF_PUBLISH_TABLE, dbKeysPrefix + DB_KEY_PRODUCT_ID, &previousProductId);
     m_miscStorage->get(COMPONENT_NAME, DCF_PUBLISH_TABLE, dbKeysPrefix + DB_KEY_DSN, &previousDeviceSerialNumber);
-    m_previousDeviceInfo = DeviceInfo::create(previousClientId, previousProductId, previousDeviceSerialNumber);
+    m_previousDeviceInfo = DeviceInfo::create(previousClientId, previousClientSecret, previousProductId, previousDeviceSerialNumber);
 
     m_previousEnvelopeVersion = "";
     m_miscStorage->get(

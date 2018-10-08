@@ -43,7 +43,7 @@ UNIT_TEST_MODEL_PATH="$INSTALL_BASE/avs-device-sdk/KWD/inputs/SensoryModels/"
 UNIT_TEST_MODEL="$THIRD_PARTY_PATH/alexa-rpi/models/spot-alexa-rpi-31000.snsr"
 CONFIG_FILE="$BUILD_PATH/Integration/AlexaClientSDKConfig.json"
 
-WAKE_WORD_ENGINE="sensory" # "kitt_ai" or  "sensory" wake word engines
+WAKE_WORD_ENGINE="kitt_ai" # "kitt_ai" or  "sensory" wake word engines
 SENSORY_PATH="$THIRD_PARTY_PATH/alexa-rpi"
 SENSORY_MODELS_PATH="$SENSORY_PATH/models"
 KITT_AI_PATH="$THIRD_PARTY_PATH/snowboy"
@@ -100,6 +100,7 @@ then
   echo  'bash setup.sh <config-file>'
   echo  'the config file must contain the following:'
   echo  '   CLIENT_ID=<OAuth client ID>'
+  echo  '   CLIENT_SECRET=<AMAZON Client Secret>'
   echo  '   PRODUCT_NAME=<your product name for device>'
   echo  '   DEVICE_SERIAL_NUMBER=<your device serial number>'
 
@@ -113,6 +114,12 @@ set -e
 if [[ ! "$CLIENT_ID" =~ amzn1\.application-oa2-client\.[0-9a-z]{32} ]]
 then
    echo 'client ID is invalid!'
+   exit 1
+fi
+
+if [[ ! "$CLIENT_SECRET" =~ [0-9a-f]+ ]]
+then
+   echo 'client Secret is invalid!'
    exit 1
 fi
 
@@ -295,6 +302,7 @@ cat << EOF > "$CONFIG_FILE"
     },
     "deviceInfo":{
         "clientId":"$CLIENT_ID",
+        "clientSecret":"$CLIENT_SECRET",
         "deviceSerialNumber":"$DEVICE_SERIAL_NUMBER",
         "productId":"$PRODUCT_ID"
     },
