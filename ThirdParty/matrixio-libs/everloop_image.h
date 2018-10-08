@@ -43,8 +43,7 @@ const int kMatrixVoiceNLeds   = 18;
 
 class EverloopImage {
  public:
-  EverloopImage(int nleds = kMatrixCreatorNLeds) { leds.resize(nleds); }
-  void resizeNLeds(int nleds) { leds.resize(nleds); }
+  EverloopImage(int nleds = kMatrixVoiceNLeds) { leds.resize(nleds); }
   std::vector<LedValue> leds;
 };
 

@@ -29,22 +29,13 @@
 
 namespace matrix_hal {
 
-Everloop::Everloop() {
-  this(false);
-}
-
-Everloop::Everloop(const bool isMatrixVoice) {
-  m_isMatrixVoice = isMatrixVoice;
-  m_NLeds = (m_isMatrixVoice) ? kMatrixVoiceNLeds : kMatrixCreatorNLeds;
-}
-
+Everloop::Everloop() { }
 
 bool Everloop::Write(const EverloopImage* led_image) {
 
   int fd = open("/dev/matrixio_everloop", O_WRONLY);
 
-  led_image->resizeNLeds(m_NLeds);
-  char buff[4*m_NLeds];
+  char buff[4*kMatrixVoiceNLeds];
   uint32_t addr_offset = 0;
   for (const LedValue& led : led_image->leds) {
 
@@ -52,10 +43,11 @@ bool Everloop::Write(const EverloopImage* led_image) {
     buff[addr_offset+1] = led.green;
     buff[addr_offset+2] = led.white;
     buff[addr_offset+3] = led.blue;
+    write(fd, buff, kMatrixVoiceNLeds*4);
     addr_offset +=4;
   }
 
-  write(fd, buff, m_NLeds*4);
+
   close(fd);
 
   return true;
