@@ -44,6 +44,7 @@ bool Everloop::Write(const EverloopImage* led_image) {
     buff[addr_offset+2] = led.white;
     buff[addr_offset+3] = led.blue;
     write(fd, buff, kMatrixVoiceNLeds*4);
+    usleep(300);
     addr_offset +=4;
   }
 
