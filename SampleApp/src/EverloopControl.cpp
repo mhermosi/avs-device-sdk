@@ -32,15 +32,21 @@ static const std::string VERSION = avsCommon::utils::sdkVersion::getCurrentVersi
 
 void EverloopControl::iterateEverLoopLeds(int red, int green, int blue, int white) {
     hal::LedValue &led = image1d.leds.at(0);
-    led.red = red;
+    led.red   = red;
     led.green = green;
-    led.blue = blue;
+    led.blue  = blue;
     led.white = white;
     everloop.Write(&image1d);
     usleep(30000);
 
-    for(uint32_t i = 0; i < image1d.leds.size(); i++) {
-        std::rotate(image1d.leds.begin(), image1d.leds.begin()+i, image1d.leds.end());
+    for(uint32_t i = 0; i <image1d.leds.size(); i++) {
+        std::swap(image1d.leds[i], image1d.leds[i+1]);
+        everloop.Write(&image1d);
+        usleep(30000);
+    }
+
+    for(uint32_t i = 1; i < image1d.leds.size(); i++) {
+        std::rotate(image1d.leds.begin(), image1d.leds.begin()+1, image1d.leds.end());
         everloop.Write(&image1d);
         usleep(30000);
     }
@@ -73,16 +79,16 @@ void EverloopControl::onDialogUXStateChanged(DialogUXState state) {
     m_executor.submit([this, state]() {
         switch (state) {
             case DialogUXState::IDLE:
-                iterateEverLoopLeds(0,10,10,0);
+                iterateEverLoopLeds(10,10,0,0);
                 return;
             case DialogUXState::LISTENING:
                 iterateEverLoopLeds(0,10,0,0);
                 return;
             case DialogUXState::THINKING:
-                iterateEverLoopLeds(10, 0, 0, 0);
+                iterateEverLoopLeds(0, 0, 10, 0);
                 return;
             case DialogUXState::SPEAKING:
-                iterateEverLoopLeds(10, 0, 0, 0);
+                iterateEverLoopLeds(0, 10, 10, 0);
                 return;
             case DialogUXState::FINISHED:
                 return;
