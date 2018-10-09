@@ -14,6 +14,7 @@
  */
 #include <unistd.h>
 #include <sstream>
+#include <algorithm>
 
 #include "SampleApp/EverloopControl.h"
 
@@ -30,25 +31,19 @@ using namespace avsCommon::sdkInterfaces;
 static const std::string VERSION = avsCommon::utils::sdkVersion::getCurrentVersion();
 
 void EverloopControl::iterateEverLoopLeds(int red, int green, int blue, int white) {
-    for(uint32_t nled = 0; nled < image1d.leds.size(); nled++){
-        hal::LedValue &led = image1d.leds[nled];
-        led.red = red;
-        led.green = green;
-        led.blue = blue;
-        led.white = white;
+    hal::LedValue &led = image1d.leds.at(0);
+    led.red = red;
+    led.green = green;
+    led.blue = blue;
+    led.white = white;
+    everloop.Write(&image1d);
+    usleep(30000);
 
-        if(nled > 0) {
-            led = image1d.leds[nled-1];
-            led.red = 0;
-            led.green = 0;
-            led.blue = 0;
-            led.white = 0;
-        }
+    for(uint32_t nled = 0; nled < image1d.leds.size(); nled++) {
+        std::rotate(image1d.leds.begin(), image1d.leds.begin()+i, image1d.leds.end());
         everloop.Write(&image1d);
         usleep(30000);
     }
-
-
 }
 
 void EverloopControl::blankLed(hal::LedValue& led ) {
