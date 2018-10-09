@@ -12,7 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
+#include <unistd.h>
 #include <sstream>
 
 #include "SampleApp/EverloopControl.h"
@@ -30,7 +30,7 @@ using namespace avsCommon::sdkInterfaces;
 static const std::string VERSION = avsCommon::utils::sdkVersion::getCurrentVersion();
 
 void EverloopControl::iterateEverLoopLeds(int red, int green, int blue, int white) {
-    for(int nled = 0; nled < image1d.leds.size(); i++){
+    for(uint32_t nled = 0; nled < image1d.leds.size(); nled++){
         hal::LedValue &led = image1d.leds[nled];
         led.red = red;
         led.green = green;
@@ -44,9 +44,10 @@ void EverloopControl::iterateEverLoopLeds(int red, int green, int blue, int whit
             led.blue = 0;
             led.white = 0;
         }
+        everloop.Write(&image1d);
+        usleep(30000);
     }
 
-    everloop.Write(&image1d);
 
 }
 
