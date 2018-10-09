@@ -38,17 +38,14 @@ bool Everloop::Write(const EverloopImage* led_image) {
   char buff[4*kMatrixVoiceNLeds];
   uint32_t addr_offset = 0;
   for (const LedValue& led : led_image->leds) {
-
     buff[addr_offset] = led.red;
     buff[addr_offset+1] = led.green;
     buff[addr_offset+2] = led.white;
     buff[addr_offset+3] = led.blue;
-    write(fd, buff, kMatrixVoiceNLeds*4);
-    usleep(300);
     addr_offset +=4;
   }
 
-
+  write(fd, buff, kMatrixVoiceNLeds*4);
   close(fd);
 
   return true;

@@ -45,6 +45,10 @@ private:
 
     void SetEverloopColors(int red, int green, int blue, int white);
 
+    void iterateEverLoopLeds(int red, int green, int blue, int white);
+    void blankAllLeds();
+    void blankLed(hal::LedValue& led );
+
     hal::Everloop everloop;
     hal::EverloopImage image1d;
 };

@@ -29,8 +29,41 @@ using namespace avsCommon::sdkInterfaces;
 
 static const std::string VERSION = avsCommon::utils::sdkVersion::getCurrentVersion();
 
-void EverloopControl::SetEverloopColors(int red, int green, int blue, int white) {
+void EverloopControl::iterateEverLoopLeds(int red, int green, int blue, int white) {
+    for(int nled = 0; nled < image1d.leds.size(); i++){
+        hal::LedValue &led = image1d.leds[nled];
+        led.red = red;
+        led.green = green;
+        led.blue = blue;
+        led.white = white;
+
+        if(nled > 0) {
+            led = image1d.leds[nled-1];
+            led.red = 0;
+            led.green = 0;
+            led.blue = 0;
+            led.white = 0;
+        }
+    }
+
+    everloop.Write(&image1d);
+
+}
+
+void EverloopControl::blankLed(hal::LedValue& led ) {
+    led.red   = 0;
+    led.green = 0;
+    led.blue  = 0;
+    led.white = 0;
+}
+void EverloopControl::blankAllLeds() {
     for (hal::LedValue& led : image1d.leds) {
+        EverloopControl::blankLed(led);
+    }
+}
+
+void EverloopControl::SetEverloopColors(int red, int green, int blue, int white) {
+     for (hal::LedValue& led : image1d.leds) {
         led.red = red;
         led.green = green;
         led.blue = blue;
@@ -44,16 +77,16 @@ void EverloopControl::onDialogUXStateChanged(DialogUXState state) {
     m_executor.submit([this, state]() {
         switch (state) {
             case DialogUXState::IDLE:
-                SetEverloopColors(0,0,10,0);
+                iterateEverLoopLeds(0,10,10,0);
                 return;
             case DialogUXState::LISTENING:
-                SetEverloopColors(0,10,0,0);
+                iterateEverLoopLeds(0,10,0,0);
                 return;
             case DialogUXState::THINKING:
-                SetEverloopColors(10, 0, 0, 0);
+                iterateEverLoopLeds(10, 0, 0, 0);
                 return;
             case DialogUXState::SPEAKING:
-                SetEverloopColors(10, 0, 0, 0);
+                iterateEverLoopLeds(10, 0, 0, 0);
                 return;
             case DialogUXState::FINISHED:
                 return;
