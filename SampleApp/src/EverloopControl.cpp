@@ -39,7 +39,7 @@ void EverloopControl::iterateEverLoopLeds(int red, int green, int blue, int whit
     everloop.Write(&image1d);
     usleep(30000);
 
-    for(uint32_t nled = 0; nled < image1d.leds.size(); nled++) {
+    for(uint32_t i = 0; i < image1d.leds.size(); i++) {
         std::rotate(image1d.leds.begin(), image1d.leds.begin()+i, image1d.leds.end());
         everloop.Write(&image1d);
         usleep(30000);
